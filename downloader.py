@@ -1,5 +1,10 @@
-from pytube import YouTube
+from pytube import YouTube, Playlist
 import sys, getopt, os
+
+def save_file(title, out_file):
+    new_file_name = title + ".mp3"
+    os.rename(out_file, new_file_name)
+    print(new_file_name + " has been successfully downloaded.")
 
 
 def download_mp3(link, destination, output_file_title):
@@ -10,15 +15,14 @@ def download_mp3(link, destination, output_file_title):
 
     out_file = audio.download(output_path=destination)
     base, ext = os.path.splitext(out_file)
-    title = str(output_file_title) or (base)
-    new_file_name = base + ".mp3"
-    os.rename(out_file, new_file_name)
-    print(new_file_name + " has been successfully downloaded.")
+    title = output_file_title or base
+    save_file(title, out_file)
 
 
 def batch_download():
     # download from source_links.csv
     pass    
+
 
 def interactive_single_download():
     print("Enter link")
@@ -27,14 +31,14 @@ def interactive_single_download():
     print("Enter the destination (leave blank for current directory)")
     destination = str(input(">> ")) or '.'
     print("Enter the file name (leave blank for default file name)")
-    name = str(input(">> ")) or '.'
+    name = str(input(">> ")) or None
 
-    download_mp3(link, destination)
+    download_mp3(link, destination, name)
 
 
 def main(argv):
     batch_mode = 0
-    opts, args = getopt.getopt(argv,"hi:b",["interactive=","batch="])
+    opts, args = getopt.getopt(argv,"hib",["interactive=","batch="])
     # interactive mode is default
     for opt, arg in opts:
         if opt == '-h':
